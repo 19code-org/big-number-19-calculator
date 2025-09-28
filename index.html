@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Number 19 Calculator Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        #numberInput {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+
+        #numberInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #calculateBtn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        #calculateBtn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        #calculateBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #clearBtn {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #e9ecef;
+        }
+
+        #clearBtn:hover {
+            background: #e9ecef;
+        }
+
+        .examples {
+            margin-bottom: 30px;
+        }
+
+        .example-btn {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 15px;
+            margin: 5px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .example-btn:hover {
+            background: #e9ecef;
+        }
+
+        #resultArea {
+            margin-top: 30px;
+        }
+
+        #resultCard {
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            transition: all 0.5s;
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #ffeaa7;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 Big Number 19 Calculator</h1>
+        <p class="subtitle">Check if extremely large numbers are divisible by 19</p>
+
+        <div class="input-section">
+            <input type="text"
+                   id="numberInput"
+                   placeholder="Enter a large number (up to 20 digits)"
+                   maxlength="20">
+
+            <div class="button-group">
+                <button id="calculateBtn">Calculate</button>
+                <button id="clearBtn">Clear</button>
+            </div>
+
+            <div id="inputWarning" class="warning hidden">
+                ⚠️ Please enter only numbers (0-9)
+            </div>
+
+            <div id="rateLimitWarning" class="warning hidden">
+                ⏱️ Rate limit reached. Please wait <span id="rateLimitCountdown">30</span> seconds.
+            </div>
+        </div>
+
+        <div class="examples">
+            <p><strong>Try these examples:</strong></p>
+            <button class="example-btn" onclick="setExample('19')">19</button>
+            <button class="example-btn" onclick="setExample('114')">114</button>
+            <button class="example-btn" onclick="setExample('1140')">1140</button>
+            <button class="example-btn" onclick="setExample('123456789')">123456789</button>
+            <button class="example-btn" onclick="setExample('12345678901234567890')">20 digits</button>
+        </div>
+
+        <div id="resultArea" class="hidden">
+            <div id="resultCard">
+                <div id="successResult" class="hidden">
+                    <h3 style="color: #28a745; margin-bottom: 15px;">✅ Divisible by 19!</h3>
+                    <p id="successFormula" style="font-family: monospace; font-size: 16px; background: #f8f9fa; padding: 15px; border-radius: 8px;"></p>
+                </div>
+
+                <div id="errorResult" class="hidden">
+                    <h3 style="color: #dc3545; margin-bottom: 15px;">❌ Not divisible by 19</h3>
+                    <p id="errorFormula" style="font-family: monospace; font-size: 16px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px;"></p>
+                    <p id="errorRemainder" style="color: #666; font-size: 14px;"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Powered by <a href="https://19code.org" target="_blank">19code.org</a> |
+               <a href="https://github.com/19code-org/big-number-19-calculator" target="_blank">View on GitHub</a></p>
+            <p style="margin-top: 10px; font-size: 12px;">
+                This calculator uses BigInt for precise calculations of numbers with 19
+            </p>
+        </div>
+    </div>
+
+    <script src="src/calculator19.js"></script>
+</body>
+</html>
